@@ -1,7 +1,7 @@
 var Camera = function(gl)
 {
     this.framesSinceLastAction = -1;
-    this.position = new Vector3(-1.2, 2.7, 2.2);
+    this.position = new Vector3(2*-1.2, 2*2.7, 2*2.2);
     this.yaw = -3.67;
     this.pitch = 0.85;
     this.fov = 0.5;

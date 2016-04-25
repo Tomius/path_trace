@@ -73,31 +73,15 @@ var Quad = function(gl, width, height)
 
     this.makeNoClip().copyIntoArray(this.quadricData, 3*16);
 
-    var A = this.makePlane();
-    var traslater = new Matrix4();
-    traslater.setIdentity();
-    traslater.setColumn(3, new Vector4(0.0, -1000.0, 0.0, 1));
-    A.multiply(traslater);
-    traslater.transpose();
-    A = traslater.mult(A);
-    A.copyIntoArray(this.quadricData, 4*16);
-
-    this.makeNoClip().copyIntoArray(this.quadricData, 5*16);
-
-    this.materialData[0] = 1.0;
-    this.materialData[1] = 1.0;
-    this.materialData[2] = 0.5;
-    this.materialData[3] = 0.35;
+    this.materialData[0] = 1.15;
+    this.materialData[1] = 1.15;
+    this.materialData[2] = 0.05;
+    this.materialData[3] = 0.0;
 
     this.materialData[4] = 0.75;
     this.materialData[5] = 1.0;
     this.materialData[6] = 1.0;
-    this.materialData[7] = 0.85;
-
-    this.materialData[8] = 1.0;
-    this.materialData[9] = 1.0;
-    this.materialData[10] = 1.0;
-    this.materialData[11] = 0.0;
+    this.materialData[7] = 0.0;
 } // Quad constructor ends
 
 Quad.prototype.makeSphere = function(){

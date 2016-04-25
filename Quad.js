@@ -1,4 +1,4 @@
-var Quad = function(gl)
+var Quad = function(gl, width, height)
 {
     this.vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
@@ -9,6 +9,12 @@ var Quad = function(gl)
                +1.0, -1.0,
                +1.0, +1.0 ] ),
                 gl.STATIC_DRAW);
+
+    this.texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, this.texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
     this.vertexBuffer.itemSize = 2;
     this.vertexBuffer.numItems = 4;
@@ -39,6 +45,7 @@ var Quad = function(gl)
 
     this.quadricsLocation = gl.getUniformLocation(this.program, 'quadrics');
     this.materialsLocation = gl.getUniformLocation(this.program, 'materials');
+    this.framesSinceLastActionLocation = gl.getUniformLocation(this.program, 'framesSinceLastAction');
 
     this.quadricData = new Float32Array(16*32);
     this.materialData = new Float32Array(16*4);
@@ -64,18 +71,33 @@ var Quad = function(gl)
     A = scaler.mult(A);
     A.copyIntoArray(this.quadricData, 2*16);
 
-    var B = this.makeSphere();
-    B.copyIntoArray(this.quadricData, 3*16);
+    this.makeNoClip().copyIntoArray(this.quadricData, 3*16);
+
+    var A = this.makePlane();
+    var traslater = new Matrix4();
+    traslater.setIdentity();
+    traslater.setColumn(3, new Vector4(0.0, -1000.0, 0.0, 1));
+    A.multiply(traslater);
+    traslater.transpose();
+    A = traslater.mult(A);
+    A.copyIntoArray(this.quadricData, 4*16);
+
+    this.makeNoClip().copyIntoArray(this.quadricData, 5*16);
 
     this.materialData[0] = 1.0;
     this.materialData[1] = 1.0;
     this.materialData[2] = 0.5;
-    this.materialData[3] = 0.5;
+    this.materialData[3] = 0.35;
 
     this.materialData[4] = 0.75;
     this.materialData[5] = 1.0;
     this.materialData[6] = 1.0;
-    this.materialData[7] = 0.75;
+    this.materialData[7] = 0.85;
+
+    this.materialData[8] = 1.0;
+    this.materialData[9] = 1.0;
+    this.materialData[10] = 1.0;
+    this.materialData[11] = 0.0;
 } // Quad constructor ends
 
 Quad.prototype.makeSphere = function(){
@@ -85,11 +107,25 @@ Quad.prototype.makeSphere = function(){
                         0.0, 0.0, 0.0,-1.0);
 }
 
+Quad.prototype.makeNoClip = function(){
+    return new Matrix4( 0.0, 0.0, 0.0, 0.0,
+                        0.0, 0.0, 0.0, 0.0,
+                        0.0, 0.0, 0.0, 0.0,
+                        0.0, 0.0, 0.0, 0.0);
+}
+
+Quad.prototype.makePlane = function(){
+    return new Matrix4( 0.0, 0.0, 0.0, 0.0,
+                        0.0, 1.0, 0.0, 0.0,
+                        0.0, 0.0, 0.0, 0.0,
+                        0.0, 0.0, 0.0, -0.001);
+}
+
 Quad.prototype.keydown = function(keyCode) {
     if(keyboardMap[keyCode] == 'SPACE') this.spacePressed = !this.spacePressed;
 }
 
-Quad.prototype.draw = function(gl, camera)  {
+Quad.prototype.draw = function(gl, camera, width, height, framesSinceLastAction)  {
     gl.useProgram(this.program);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
     gl.enableVertexAttribArray( this.positionAttributeIndex);
@@ -105,7 +141,10 @@ Quad.prototype.draw = function(gl, camera)  {
     gl.uniform3f(this.eyeLocation, camera.position.x, camera.position.y, camera.position.z);
     gl.uniformMatrix4fv(this.quadricsLocation, false, this.quadricData);
     gl.uniform4fv(this.materialsLocation, this.materialData);
+    gl.uniform1i(this.framesSinceLastActionLocation, framesSinceLastAction);
+    console.log(framesSinceLastAction);
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 0, 0, width, height, 0);
 }
 

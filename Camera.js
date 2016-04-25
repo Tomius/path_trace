@@ -1,5 +1,6 @@
 var Camera = function(gl)
 {
+    this.framesSinceLastAction = -1;
     this.position = new Vector3(-1.2, 2.7, 2.2);
     this.yaw = -3.67;
     this.pitch = 0.85;
@@ -51,6 +52,9 @@ Camera.prototype.update = function(dt) {
     if(this.pitch < -3.14/2.0)
         this.pitch = -3.14/2.0;
 
+  if (this.mouseDelta.x != 0.0 || this.mouseDelta.y != 0.0)
+    this.framesSinceLastAction = -1;
+
 	var up = new Vector3(0, 1, 0);
     this.mouseDelta = new Vector2(0.0, 0.0);
     this.ahead = new Vector3(
@@ -60,18 +64,30 @@ Camera.prototype.update = function(dt) {
     this.right = up.cross(this.ahead);
     this.right.normalize();
 
-    if(this.wPressed)
+    if(this.wPressed) {
         this.position.add(this.ahead.scaled( this.speed * dt ));
-    if(this.sPressed)
+        this.framesSinceLastAction = -1;
+    }
+    if(this.sPressed) {
         this.position.sub(this.ahead.scaled( this.speed * dt ));
-    if(this.aPressed)
+        this.framesSinceLastAction = -1;
+    }
+    if(this.aPressed) {
         this.position.sub(this.right.scaled( this.speed * dt ));
-    if(this.dPressed)
+        this.framesSinceLastAction = -1;
+    }
+    if(this.dPressed) {
         this.position.add(this.right.scaled( this.speed * dt ));
-    if(this.qPressed)
+        this.framesSinceLastAction = -1;
+    }
+    if(this.qPressed) {
         this.position.sub(up.scaled( this.speed * dt ));
-    if(this.ePressed)
+        this.framesSinceLastAction = -1;
+    }
+    if(this.ePressed) {
         this.position.add(up.scaled( this.speed * dt ));
+        this.framesSinceLastAction = -1;
+    }
 
     var lookAt = this.position.clone();
     lookAt.add(this.ahead);
@@ -79,6 +95,7 @@ Camera.prototype.update = function(dt) {
     this.viewDirMatrix = makeViewMatrix(new Vector3(0.0, 0.0, 0.0),  this.ahead,  new Vector3(0.0, 1.0, 0.0)).transpose();
     this.viewDirMatrix.multiply(this.projMatrix);
     this.viewDirMatrix.invert();
+    this.framesSinceLastAction += 1;
 }
 
 

@@ -12,7 +12,7 @@ var vsQuadSrc =
 		gl_Position = position;
 		vec4 hViewDir =  position * viewDirMatrix;
 		viewDirToNormalize = hViewDir.xyz / hViewDir.w;
-		texCoord = (vPosition + vec2(1.0)) * vec2(0.5, -0.5);
+		texCoord = (vPosition + vec2(1.0)) * vec2(0.5, 0.5);
 	}
 `
 ;

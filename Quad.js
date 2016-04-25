@@ -126,7 +126,6 @@ Quad.prototype.draw = function(gl, camera, width, height, framesSinceLastAction)
     gl.uniformMatrix4fv(this.quadricsLocation, false, this.quadricData);
     gl.uniform4fv(this.materialsLocation, this.materialData);
     gl.uniform1i(this.framesSinceLastActionLocation, framesSinceLastAction);
-    console.log(framesSinceLastAction);
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 0, 0, width, height, 0);

@@ -41,11 +41,15 @@ App.prototype.update = function()
 }
 
 App.prototype.clicked = function(event) {
-	this.canvas.requestPointerLock();
+  if (this.canvas.requestPointerLock) {
+    this.canvas.requestPointerLock();
+  } else if (this.canvas.mozRequestPointerLock) {
+	  this.canvas.mozRequestPointerLock();
+  }
 }
 
 App.prototype.pointerLockChange = function(event) {
-	this.ownMouse = (this.canvas == document.pointerLockElement);
+	this.ownMouse = (this.canvas == document.pointerLockElement) || (this.canvas == document.mozPointerLockElement);
 }
 
 App.prototype.keyDown = function(event) {
@@ -72,7 +76,8 @@ function start()
 	output = document.getElementById("output");
 	app = new App(canvas, output);
 
-	document.addEventListener('pointerlockchange', function(event){  app.pointerLockChange(event); }, false);
+  document.addEventListener('pointerlockchange', function(event){  app.pointerLockChange(event); }, false);
+	document.addEventListener('mozpointerlockchange', function(event){  app.pointerLockChange(event); }, false);
 	canvas.onclick = function(event) { app.clicked(event); } ;
 	document.onkeydown = function(event){  app.keyDown(event); };
 	document.onkeyup = function(event){  app.keyUp(event); };

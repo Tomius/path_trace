@@ -48,6 +48,82 @@ var App = function(canvas, output)
   }
 }
 
+lastTime = new Date();
+
+App.prototype.update = function()
+{
+  if (!this.gl) {
+    return;
+  }
+  try {
+    var time = new Date();
+    var dt = (time - lastTime) / 1000.0;
+    lastTime = time;
+    this.camera.update(dt);
+
+    this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+
+    this.gl.clearColor(0.6, 0.0, 0.3, 1.0);
+    this.gl.clearDepth(1.0);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+    this.quad.draw(this.gl, this.camera, this.canvas.width, this.canvas.height, this.camera.framesSinceLastAction);
+
+    window.requestAnimFrame(function (){ app.update();});
+  } catch(err) {
+    document.getElementById("output").innerHTML = err;
+  }
+}
+
+App.prototype.clicked = function(event) {
+  try {
+    if (this.canvas.requestPointerLock) {
+      this.canvas.requestPointerLock();
+    } else if (this.canvas.mozRequestPointerLock) {
+      this.canvas.mozRequestPointerLock();
+    }
+  } catch(err) {
+    document.getElementById("output").innerHTML = err;
+  }
+}
+
+App.prototype.pointerLockChange = function(event) {
+  try {
+    this.ownMouse = (this.canvas == document.pointerLockElement) || (this.canvas == document.mozPointerLockElement);
+  } catch(err) {
+    document.getElementById("output").innerHTML = err;
+  }
+}
+
+App.prototype.keyDown = function(event) {
+  try {
+    this.quad.keydown(event.keyCode);
+    if (this.ownMouse)
+      this.camera.keydown(event.keyCode);
+  } catch(err) {
+    document.getElementById("output").innerHTML = err;
+  }
+}
+
+App.prototype.keyUp = function(event) {
+  try {
+    if (this.ownMouse)
+      this.camera.keyup(event.keyCode);
+  } catch(err) {
+    document.getElementById("output").innerHTML = err;
+  }
+}
+
+App.prototype.mouseMove = function(event) {
+  try {
+    if (!this.ownMouse)
+      return;
+    this.camera.mouseDelta.add( new Vector2(event.movementX, event.movementY));
+    event.preventDefault();
+  } catch(err) {
+    document.getElementById("output").innerHTML = err;
+  }
+}
+
 // function start() {
   var canvas = document.getElementById("container");
   var output = document.getElementById("output");

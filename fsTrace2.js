@@ -117,7 +117,7 @@ var fsTraceSrc =
       if (wasHit) {
         multiplier = 1.0;
         bestMaterial = vec4(1, 1, 1, 0);
-        lighting = vec3(1, 1, 1);
+        lighting = vec3(1, 1, 0);
       } else {
         multiplier = 1.0;
         bestMaterial = vec4(1, 1, 1, 0);
@@ -128,31 +128,6 @@ var fsTraceSrc =
 
       return lighting * discoloration;
     }
-
-    float ToneMap_Internal(float x) {
-      float A = 0.22;
-      float B = 0.30;
-      float C = 0.10;
-      float D = 0.20;
-      float E = 0.01;
-      float F = 0.30;
-
-      return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F)) - E/F;
-    }
-
-    float Luminance(vec3 c) {
-      return sqrt(0.299 * c.r*c.r + 0.587 * c.g*c.g + 0.114 * c.b*c.b);
-    }
-
-    vec3 ToneMap(vec3 color) {
-      float luminance = Luminance(color);
-      if (luminance < 1e-3) {
-        return color;
-      }
-      float newLuminance = ToneMap_Internal(luminance) / ToneMap_Internal(11.2);
-      return color * newLuminance / luminance;
-    }
-
 
     void main() {
       vec4 d0 = vec4(normalize(viewDirToNormalize), 0.0);
@@ -170,12 +145,12 @@ var fsTraceSrc =
         }
       }
 
-      vec3 finalColor = ToneMap(outColor / float(kSampleCount));
+      vec3 finalColor = outColor / float(kSampleCount);
 
-      if (framesSinceLastAction > 0) {
-        vec3 oldColor = texture2D(tex, texCoord).rgb;
-        finalColor = mix(oldColor, finalColor, 1.0 / float(framesSinceLastAction));
-      }
+      // if (framesSinceLastAction > 0) {
+      //   vec3 oldColor = texture2D(tex, texCoord).rgb;
+      //   finalColor = mix(oldColor, finalColor, 1.0 / float(framesSinceLastAction));
+      // }
 
       gl_FragColor = vec4(finalColor, 1.0);
     }

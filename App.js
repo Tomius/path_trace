@@ -4,21 +4,13 @@ var output;
 var App = function(canvas, output)
 {
 	this.canvas = canvas;
-
+  this.canvas.width = 1024;
+  this.canvas.height = 1024;
 
   var opts = { alpha: false, depth: false, stencil: false, antialias: false, failIfMajorPerformanceCaveat: true };
-	// this.gl = canvas.getContext("webgl", opts) || canvas.getContext("experimental-webgl", opts);
-	// if (this.gl == null) {
-	// 	output.textContent = ">>> No WebGL support <<<";
-	// 	return;
-	// }
   this.gl = WebGLUtils.setupWebGL(canvas, opts);
 
-  this.canvas.width = 256;
-  this.canvas.height = 256;
-
 	this.quad = new Quad(this.gl, this.canvas.width, this.canvas.height);
-
 	this.camera = new Camera();
 	this.ownMouse = false;
 }
@@ -86,4 +78,8 @@ function start()
 	document.onmousemove = function(event){  app.mouseMove(event); };
 
 	window.requestAnimationFrame(function (){ app.update();});
+  window.onerror = function(msg, url, linenumber) {
+    alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber);
+    return true;
+  }
 }

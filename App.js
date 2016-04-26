@@ -35,7 +35,7 @@ App.prototype.update = function()
 	this.gl.clearColor(0.6, 0.0, 0.3, 1.0);
 	this.gl.clearDepth(1.0);
 	this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-  this.quad.draw(this.gl, this.camera, this.canvas.width, this.canvas.height, this.camera.framesSinceLastAction);
+  //this.quad.draw(this.gl, this.camera, this.canvas.width, this.canvas.height, this.camera.framesSinceLastAction);
 
 	window.requestAnimationFrame(function (){ app.update();});
 }

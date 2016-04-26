@@ -116,7 +116,10 @@ var fsTraceSrc =
 
       if (wasHit) {
         vec4 hit = e + d*bestT;
-        vec3 normal = normalize(getQuadricNormal(bestQuadric, hit));
+        vec3 normal = normalize(hit.xyz);
+        if (bestIndex == 4) {
+          normal = normalize(getQuadricNormal(bestQuadric, hit));
+        }
         e = hit + vec4(normal, 0.0) * 0.001;
 
         // calc lighting

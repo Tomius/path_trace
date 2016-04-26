@@ -116,7 +116,7 @@ var fsTraceSrc =
 
       if (wasHit) {
         vec4 hit = e + d*bestT;
-        vec3 normal = normalize(hit.xyz);
+        vec3 normal = bestIndex >= 2 ? vec3(0, 1, 0) : normalize(hit.xyz);
         // if (bestIndex == 4) {
         //   vec3 a = (bestQuadric * hit).xyz;
         //   vec3 b = (hit * bestQuadric).xyz;

@@ -117,7 +117,7 @@ var fsTraceSrc =
       if (wasHit) {
         multiplier = 1.0;
         bestMaterial = vec4(1, 1, 1, 0);
-        lighting = vec3(1, 1, 0);
+        lighting = vec3(float(bestIndex)/4.0, 1, 0);
       } else {
         multiplier = 1.0;
         bestMaterial = vec4(1, 1, 1, 0);
@@ -152,7 +152,7 @@ var fsTraceSrc =
       //   finalColor = mix(oldColor, finalColor, 1.0 / float(framesSinceLastAction));
       // }
 
-      gl_FragColor = vec4(finalColor, 1.0);
+      gl_FragColor = vec4(outColor, 1.0);
     }
 
 `

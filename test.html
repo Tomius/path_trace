@@ -52,9 +52,9 @@ var App = function(canvas, output)
 }
 
   var canvas = document.getElementById("container");
-  var gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-  canvas.width = 1024;
-  canvas.height = 1024;
+    var output = document.getElementById("output");
+    app = new App(canvas, output);
+
   gl.viewport(0, 0, canvas.width, canvas.height);
   gl.clearColor(0.6, 0.0, 0.3, 1.0);
   gl.clearDepth(1.0);

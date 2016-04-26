@@ -52,7 +52,7 @@ var App = function(canvas, output)
   var canvas = document.getElementById("container");
   var output = document.getElementById("output");
   app = new App(canvas, output);
-  app.gl = canvas.getContext("experimental-webgl");
+  app.gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
 
   canvas.width = 1024;
   canvas.height = 1024;

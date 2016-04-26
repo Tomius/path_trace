@@ -10,6 +10,9 @@ var App = function(canvas, output)
 
     //var opts = { alpha: false, depth: false, stencil: false, antialias: false, failIfMajorPerformanceCaveat: true };
     this.gl = WebGLUtils.setupWebGL(canvas);
+    if (!this.gl) {
+      return;
+    }
 
   	this.quad = new Quad(this.gl, this.canvas.width, this.canvas.height);
   	this.camera = new Camera();

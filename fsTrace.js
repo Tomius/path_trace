@@ -124,7 +124,7 @@ var fsTraceSrc =
           float distFromCenter = length(hit.xyz - (kLampStart + kLampSize/2.0));
           lighting = 8.0 * vec3(0.9, 0.9, 0.85);
         } else {
-          vec3 light = PointOnLightSource(hit.xyz + vec3(0.123, 0.456, 0.891) * (0.4765*sample_id + 5.241*float(i)));
+          vec3 light = PointOnLightSource(hit.xyz + vec3(0.123, 0.456, 0.891) * sample_id);
           vec3 toLight = light - hit.xyz;
           float toLightLen = length(toLight);
           vec3 toLightDir = toLight / toLightLen;

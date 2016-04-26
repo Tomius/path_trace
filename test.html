@@ -51,31 +51,31 @@ var App = function(canvas, output)
   }
 }
 
-lastTime = new Date();
+// lastTime = new Date();
 
-App.prototype.update = function()
-{
-  if (!this.gl) {
-    return;
-  }
-  try {
-    var time = new Date();
-    var dt = (time - lastTime) / 1000.0;
-    lastTime = time;
-    this.camera.update(dt);
+// App.prototype.update = function()
+// {
+//   if (!this.gl) {
+//     return;
+//   }
+//   try {
+//     var time = new Date();
+//     var dt = (time - lastTime) / 1000.0;
+//     lastTime = time;
+//     this.camera.update(dt);
 
-    this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+//     this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
 
-    this.gl.clearColor(0.6, 0.0, 0.3, 1.0);
-    this.gl.clearDepth(1.0);
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-    this.quad.draw(this.gl, this.camera, this.canvas.width, this.canvas.height, this.camera.framesSinceLastAction);
+//     this.gl.clearColor(0.6, 0.0, 0.3, 1.0);
+//     this.gl.clearDepth(1.0);
+//     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+//     this.quad.draw(this.gl, this.camera, this.canvas.width, this.canvas.height, this.camera.framesSinceLastAction);
 
-    window.requestAnimFrame(function (){ app.update();});
-  } catch(err) {
-    document.getElementById("output").innerHTML = err;
-  }
-}
+//     window.requestAnimFrame(function (){ app.update();});
+//   } catch(err) {
+//     document.getElementById("output").innerHTML = err;
+//   }
+// }
 
 App.prototype.clicked = function(event) {
   try {

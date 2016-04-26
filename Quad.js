@@ -128,6 +128,6 @@ Quad.prototype.draw = function(gl, camera, width, height, framesSinceLastAction)
     gl.uniform1i(this.framesSinceLastActionLocation, framesSinceLastAction);
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.RGB, 0, 0, width, height, 0);
+    //gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.RGB, 0, 0, width, height, 0);
 }
 

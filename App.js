@@ -23,6 +23,9 @@ lastTime = new Date();
 
 App.prototype.update = function()
 {
+  if (!this.gl) {
+    return;
+  }
   try {
   	var time = new Date();
   	var dt = (time - lastTime) / 1000.0;

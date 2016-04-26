@@ -144,15 +144,15 @@ App.prototype.mouseMove = function(event) {
   document.onkeyup = function(event){  app.keyUp(event); };
   document.onmousemove = function(event){  app.mouseMove(event); };
 
-  window.requestAnimFrame(function (){ app.update();});
+  // window.requestAnimFrame(function (){ app.update();});
 // }
 
 
-function resize()
-{
-  document.getElementById("output").innerHTML = "resized" + this.canvas.width + "x" + this.canvas.height;
-  app.quad = new Quad(app.gl, this.canvas.width, this.canvas.height);
-}
+// function resize()
+// {
+//   document.getElementById("output").innerHTML = "resized" + this.canvas.width + "x" + this.canvas.height;
+//   app.quad = new Quad(app.gl, this.canvas.width, this.canvas.height);
+// }
 </script>
 
 

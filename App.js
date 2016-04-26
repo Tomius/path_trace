@@ -42,7 +42,7 @@ App.prototype.update = function()
   	this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
     this.quad.draw(this.gl, this.camera, this.canvas.width, this.canvas.height, this.camera.framesSinceLastAction);
 
-  	window.requestAnimationFrame(function (){ app.update();});
+  	window.requestAnimFrame(function (){ app.update();});
   } catch(err) {
     document.getElementById("output").innerHTML = err;
   }
@@ -112,7 +112,7 @@ function start()
   	document.onkeyup = function(event){  app.keyUp(event); };
   	document.onmousemove = function(event){  app.mouseMove(event); };
 
-  	window.requestAnimationFrame(function (){ app.update();});
+  	window.requestAnimFrame(function (){ app.update();});
   } catch(err) {
     document.getElementById("output").innerHTML = err;
   }

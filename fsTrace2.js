@@ -115,38 +115,9 @@ var fsTraceSrc =
       bool wasHit = intersect(e, d, bestT, bestIndex, bestMaterial, bestQuadric);
 
       if (wasHit) {
-        vec4 hit = e + d*bestT;
-        vec3 normal = bestIndex >= 2 ? vec3(0, 1, 0) : normalize(getQuadricNormal(bestQuadric, hit));
-        e = hit + vec4(normal, 0.0) * 0.001;
-
-        // calc lighting
-        if (bestIndex == 3 && trace_depth == 0.0) {
-          float distFromCenter = length(hit.xyz - (kLampStart + kLampSize/2.0));
-          lighting = 8.0 * vec3(0.9, 0.9, 0.85);
-        } else {
-          vec3 light = PointOnLightSource(hit.xyz + vec3(0.123, 0.456, 0.891) * sample_id);
-          vec3 toLight = light - hit.xyz;
-          float toLightLen = length(toLight);
-          vec3 toLightDir = toLight / toLightLen;
-          bool inShadow = intersect(e, vec4(toLightDir, 0), bestT2, bestIndex2, bestMaterial2, bestQuadric2);
-          if (!inShadow || bestT2 > toLightLen) {
-            lighting += max(dot(toLightDir, normal), 0.0) * 4.0 * vec3(0.9, 0.9, 0.85);
-          }
-        }
-
-        // generate new dir
-        float rand1 = rand(dot(vec3(1.8234, -0.1831, 0.8942), hit.xyz) + 0.1513*sample_id);
-        float rand2 = rand(dot(vec3(-0.1234, 0.9841, 5.5741), hit.xyz) - 0.2901*sample_id);
-        float longitude = 2.0 * kPi * rand1;
-        float latitude = acos(sqrt(rand2));
-        multiplier = 1.0 / latitude;
-        vec3 cartesian = vec3(
-          sin(latitude) * sin(longitude),
-          cos(latitude),
-          sin(latitude) * cos(longitude));
-        vec3 diffuse_reflection_dir = TBN(normal) * cartesian;
-        vec3 mirror_reflection_dir = reflect(d.xyz, normal);
-        d = vec4(mix(diffuse_reflection_dir, mirror_reflection_dir, bestMaterial.w), 0);
+        multiplier = 1.0;
+        bestMaterial = vec4(1, 1, 1, 0);
+        lighting = vec3(1, 1, 1);
       } else {
         multiplier = 1.0;
         bestMaterial = vec4(1, 1, 1, 0);

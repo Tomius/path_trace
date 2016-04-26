@@ -65,6 +65,7 @@ function start() {
 
 function resize()
 {
+  document.getElementById("output").innerHTML = "resized" + this.canvas.width + "x" + this.canvas.height;
   this.quad = new Quad(this.gl, this.canvas.width, this.canvas.height);
 }
 </script>

@@ -114,11 +114,11 @@ Quad.prototype.draw = function(gl, camera, width, height, framesSinceLastAction)
           false, 0,
           0);
 
-    if (this.viewDirMatrixLocation != -1) {
+    // if (this.viewDirMatrixLocation != -1) {
       var viewDirMatrixData = new Float32Array(16);
       camera.viewDirMatrix.copyIntoArray(viewDirMatrixData, 0);
       gl.uniformMatrix4fv(this.viewDirMatrixLocation, false, viewDirMatrixData);
-    }
+    // }
 
     gl.uniform3f(this.eyeLocation, camera.position.x, camera.position.y, camera.position.z);
     // gl.uniformMatrix4fv(this.quadricsLocation, false, this.quadricData);

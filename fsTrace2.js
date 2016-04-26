@@ -116,7 +116,7 @@ var fsTraceSrc =
 
       if (wasHit) {
         vec4 hit = e + d*bestT;
-        vec3 normal = vec3(0, 1, 0);
+        vec3 normal = getQuadricNormal(bestQuadric, hit);
         // vec3 normal = vec3(0, 1, 0);
         // e = hit + vec4(normal, 0.0) * 0.001;
 

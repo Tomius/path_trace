@@ -97,8 +97,8 @@ App.prototype.mouseMove = function(event) {
   }
 }
 
-function start()
-{
+// function start()
+// {
   try {
   	var canvas = document.getElementById("container");
   	var output = document.getElementById("output");
@@ -115,4 +115,4 @@ function start()
   } catch(err) {
     document.getElementById("output").innerHTML = err;
   }
-}
+// }

@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <title>WebGL test</title>
+    </head>
+
+    <body onload="start()">
+      <div>
+        <canvas id="container"></canvas>
+      </div>
+
+      <div id="output"></div>
+    </body>
+
+<script>
+  var canvas = document.getElementById("container");
+  var gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+  canvas.width = 1024;
+  canvas.height = 1024;
+  gl.viewport(0, 0, canvas.width, canvas.height);
+  gl.clearColor(0.6, 0.0, 0.3, 1.0);
+  gl.clearDepth(1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+</script>
+
+
+</html>

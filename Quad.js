@@ -35,6 +35,7 @@ var Quad = function(gl, width, height)
     gl.linkProgram(this.program);
     output.textContent += gl.getProgramInfoLog(this.program);
 
+    gl.useProgram(this.program);
     this.positionAttributeIndex =
         gl.getAttribLocation(this.program, 'vPosition');
 
@@ -46,6 +47,7 @@ var Quad = function(gl, width, height)
     this.quadricsLocation = gl.getUniformLocation(this.program, 'quadrics');
     this.materialsLocation = gl.getUniformLocation(this.program, 'materials');
     this.framesSinceLastActionLocation = gl.getUniformLocation(this.program, 'framesSinceLastAction');
+    gl.uniform1i(gl.getUniformLocation(this.program, 'quadrics'), 1);
 
     this.quadricData = new Float32Array(16*32);
     this.materialData = new Float32Array(16*4);

@@ -121,9 +121,9 @@ Quad.prototype.draw = function(gl, camera, width, height, framesSinceLastAction)
     // }
 
     gl.uniform3f(this.eyeLocation, camera.position.x, camera.position.y, camera.position.z);
-    // gl.uniformMatrix4fv(this.quadricsLocation, false, this.quadricData);
-    // gl.uniform4fv(this.materialsLocation, this.materialData);
-    // gl.uniform1i(this.framesSinceLastActionLocation, framesSinceLastAction);
+    gl.uniformMatrix4fv(this.quadricsLocation, false, this.quadricData);
+    gl.uniform4fv(this.materialsLocation, this.materialData);
+    gl.uniform1i(this.framesSinceLastActionLocation, framesSinceLastAction);
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }

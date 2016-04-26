@@ -14,6 +14,21 @@
       <div id="output"></div>
     </body>
 
+<script src="vector_math.min.js"></script>
+<script>
+  Vector2 = vectormath.Vector2;
+  Vector3 = vectormath.Vector3;
+  Vector4 = vectormath.Vector4;
+  Matrix4 = vectormath.Matrix4;
+</script>
+
+<script src="webgl-utils.js"></script>
+<script src="keycodes.js"></script>
+<script src="Camera.js"></script>
+<script src="math.js"></script>
+<script src="vsQuad.js"></script>
+<script src="fsTrace.js"></script>
+<script src="Quad.js"></script>
 <script>
   var canvas = document.getElementById("container");
   var gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");

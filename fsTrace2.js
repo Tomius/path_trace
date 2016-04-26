@@ -118,7 +118,9 @@ var fsTraceSrc =
         vec4 hit = e + d*bestT;
         vec3 normal = normalize(hit.xyz);
         if (bestIndex == 4) {
-          normal = normalize(getQuadricNormal(bestQuadric, hit));
+          vec3 a = (bestQuadric * hit).xyz;
+          vec3 b = (hit * bestQuadric).xyz;
+          normal = normalize(a + b);
         }
         e = hit + vec4(normal, 0.0) * 0.001;
 

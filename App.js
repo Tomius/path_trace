@@ -18,7 +18,7 @@ var App = function(canvas, output)
   	this.camera = new Camera();
   	this.ownMouse = false;
   } catch(err) {
-    document.getElementById("output").innerHTML = err.message;
+    document.getElementById("output").innerHTML = err;
   }
 }
 
@@ -44,7 +44,7 @@ App.prototype.update = function()
 
   	window.requestAnimationFrame(function (){ app.update();});
   } catch(err) {
-    document.getElementById("output").innerHTML = err.message;
+    document.getElementById("output").innerHTML = err;
   }
 }
 
@@ -56,7 +56,7 @@ App.prototype.clicked = function(event) {
   	  this.canvas.mozRequestPointerLock();
     }
   } catch(err) {
-    document.getElementById("output").innerHTML = err.message;
+    document.getElementById("output").innerHTML = err;
   }
 }
 
@@ -64,7 +64,7 @@ App.prototype.pointerLockChange = function(event) {
   try {
 	  this.ownMouse = (this.canvas == document.pointerLockElement) || (this.canvas == document.mozPointerLockElement);
   } catch(err) {
-    document.getElementById("output").innerHTML = err.message;
+    document.getElementById("output").innerHTML = err;
   }
 }
 
@@ -74,7 +74,7 @@ App.prototype.keyDown = function(event) {
     if (this.ownMouse)
       this.camera.keydown(event.keyCode);
   } catch(err) {
-    document.getElementById("output").innerHTML = err.message;
+    document.getElementById("output").innerHTML = err;
   }
 }
 
@@ -83,7 +83,7 @@ App.prototype.keyUp = function(event) {
   	if (this.ownMouse)
       this.camera.keyup(event.keyCode);
   } catch(err) {
-    document.getElementById("output").innerHTML = err.message;
+    document.getElementById("output").innerHTML = err;
   }
 }
 
@@ -94,7 +94,7 @@ App.prototype.mouseMove = function(event) {
   	this.camera.mouseDelta.add( new Vector2(event.movementX, event.movementY));
   	event.preventDefault();
   } catch(err) {
-    document.getElementById("output").innerHTML = err.message;
+    document.getElementById("output").innerHTML = err;
   }
 }
 
@@ -114,6 +114,6 @@ function start()
 
   	window.requestAnimationFrame(function (){ app.update();});
   } catch(err) {
-    document.getElementById("output").innerHTML = err.message;
+    document.getElementById("output").innerHTML = err;
   }
 }

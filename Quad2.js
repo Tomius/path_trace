@@ -28,6 +28,10 @@ var Quad = function(gl, width, height)
     gl.attachShader(this.program, this.fragmentShader);
     gl.linkProgram(this.program);
     output.textContent += gl.getProgramInfoLog(this.program);
+
+    gl.useProgram(this.program);
+    this.positionAttributeIndex =
+        gl.getAttribLocation(this.program, 'vPosition');
 } // Quad constructor ends
 
 

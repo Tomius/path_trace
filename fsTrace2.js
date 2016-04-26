@@ -61,7 +61,7 @@ var fsTraceSrc =
     }
 
     vec3 getQuadricNormal(mat4 A, vec4 hit) {
-      return (A*hit + hit*A).xyz;
+      return (A*hit).xyz + (hit*A).xyz;
     }
 
     bool intersect(in vec4 e, in vec4 d, out float bestT, out int bestIndex,
@@ -116,7 +116,7 @@ var fsTraceSrc =
 
       if (wasHit) {
         vec4 hit = e + d*bestT;
-        vec3 normal = normalize(hit.xyz);
+        vec3 normal = normalize(getQuadricNormal(bestQuadric, hit));
         e = hit + vec4(normal, 0.0) * 0.001;
 
         // calc lighting

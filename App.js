@@ -4,8 +4,7 @@ var output;
 var App = function(canvas, output)
 {
 	this.canvas = canvas;
-  this.canvas.width = 1024;
-  this.canvas.height = 1024;
+
 
   var opts = { alpha: false, depth: false, stencil: false, antialias: false, failIfMajorPerformanceCaveat: true };
 	// this.gl = canvas.getContext("webgl", opts) || canvas.getContext("experimental-webgl", opts);
@@ -14,6 +13,9 @@ var App = function(canvas, output)
 	// 	return;
 	// }
   this.gl = WebGLUtils.setupWebGL(canvas, opts);
+
+  this.canvas.width = 256;
+  this.canvas.height = 256;
 
 	this.quad = new Quad(this.gl, this.canvas.width, this.canvas.height);
 

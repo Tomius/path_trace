@@ -8,11 +8,12 @@ var App = function(canvas, output)
   this.canvas.height = 1024;
 
   var opts = { alpha: false, depth: false, stencil: false, antialias: false, failIfMajorPerformanceCaveat: true };
-	this.gl = canvas.getContext("webgl", opts) || canvas.getContext("experimental-webgl", opts);
-	if (this.gl == null) {
-		output.textContent = ">>> No WebGL support <<<";
-		return;
-	}
+	// this.gl = canvas.getContext("webgl", opts) || canvas.getContext("experimental-webgl", opts);
+	// if (this.gl == null) {
+	// 	output.textContent = ">>> No WebGL support <<<";
+	// 	return;
+	// }
+  this.gl = WebGLUtils.setupWebGL(canvas, opts);
 
 	this.quad = new Quad(this.gl, this.canvas.width, this.canvas.height);
 

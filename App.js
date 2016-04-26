@@ -1,5 +1,4 @@
 var app;
-var output;
 
 var App = function(canvas, output)
 {
@@ -102,7 +101,7 @@ function start()
 {
   try {
   	var canvas = document.getElementById("container");
-  	output = document.getElementById("output");
+  	var output = document.getElementById("output");
   	app = new App(canvas, output);
 
     document.addEventListener('pointerlockchange', function(event){  app.pointerLockChange(event); }, false);

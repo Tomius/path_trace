@@ -30,14 +30,35 @@
 <script src="fsTrace.js"></script>
 <script src="Quad.js"></script>
 <script>
+var App = function(canvas, output)
+{
+  try {
+    this.canvas = canvas;
+    this.canvas.width = 1024;
+    this.canvas.height = 1024;
+
+    //var opts = { alpha: false, depth: false, stencil: false, antialias: false, failIfMajorPerformanceCaveat: true };
+    this.gl = WebGLUtils.setupWebGL(canvas);
+    if (!this.gl) {
+      return;
+    }
+
+    this.quad = new Quad(this.gl, this.canvas.width, this.canvas.height);
+    this.camera = new Camera();
+    this.ownMouse = false;
+  } catch(err) {
+    document.getElementById("output").innerHTML = err;
+  }
+}
+
   var canvas = document.getElementById("container");
-  var gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-  canvas.width = 1024;
-  canvas.height = 1024;
-  gl.viewport(0, 0, canvas.width, canvas.height);
-  gl.clearColor(0.6, 0.0, 0.3, 1.0);
-  gl.clearDepth(1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  var output = document.getElementById("output");
+  app = new App(canvas, output);
+
+  app.gl.viewport(0, 0, canvas.width, canvas.height);
+  app.gl.clearColor(0.6, 0.0, 0.3, 1.0);
+  app.gl.clearDepth(1.0);
+  app.gl.clear(app.gl.COLOR_BUFFER_BIT | app.gl.DEPTH_BUFFER_BIT);
 </script>
 
 

@@ -36,10 +36,10 @@ var App = function(canvas, output)
     this.canvas = canvas;
 
     //var opts = { alpha: false, depth: false, stencil: false, antialias: false, failIfMajorPerformanceCaveat: true };
-    this.gl = WebGLUtils.setupWebGL(canvas);
-    if (!this.gl) {
-      return;
-    }
+    //this.gl = WebGLUtils.setupWebGL(canvas);
+    //if (!this.gl) {
+    //  return;
+    //}
 
     //this.quad = new Quad(this.gl, this.canvas.width, this.canvas.height);
     //this.camera = new Camera();
@@ -50,8 +50,9 @@ var App = function(canvas, output)
 }
 
   var canvas = document.getElementById("container");
-    var output = document.getElementById("output");
-    app = new App(canvas, output);
+  var output = document.getElementById("output");
+  app = new App(canvas, output);
+  app.gl = canvas.getContext("experimental-webgl");
 
   canvas.width = 1024;
   canvas.height = 1024;

@@ -9,8 +9,8 @@ var fsTraceSrc =
     uniform int framesSinceLastAction;
     uniform sampler2D tex;
 
-    const int kSampleCount = 1;
-    const int kTraceDepth = 1;
+    const int kSampleCount = 16;
+    const int kTraceDepth = 4;
     const float kPi = 3.14159265359;
     const vec3 kLampStart = vec3(-1.1, 2, -0.1);
     const vec3 kLampSize = vec3(0.2, 0.01, 0.2);
@@ -117,41 +117,36 @@ var fsTraceSrc =
       if (wasHit) {
         vec4 hit = e + d*bestT;
         vec3 normal = normalize(hit.xyz);
-        // vec3 normal = vec3(0, 1, 0);
-        // e = hit + vec4(normal, 0.0) * 0.001;
-
-        multiplier = 1.0;
-        bestMaterial = vec4(float(bestIndex)/4.0, 1, 1, 0);
-        lighting = dot(vec3(0.2, 0.8, 0), normal) * vec3(0.9, 0.9, 0.85);
+        e = hit + vec4(normal, 0.0) * 0.001;
 
         // calc lighting
-        // if (bestIndex == 3 && trace_depth == 0.0) {
-        //   float distFromCenter = length(hit.xyz - (kLampStart + kLampSize/2.0));
-        //   lighting = 8.0 * vec3(0.9, 0.9, 0.85);
-        // } else {
-        //   vec3 light = PointOnLightSource(hit.xyz + vec3(0.123, 0.456, 0.891) * sample_id);
-        //   vec3 toLight = light - hit.xyz;
-        //   float toLightLen = length(toLight);
-        //   vec3 toLightDir = toLight / toLightLen;
-        //   bool inShadow = intersect(e, vec4(toLightDir, 0), bestT2, bestIndex2, bestMaterial2, bestQuadric2);
-        //   if (!inShadow || bestT2 > toLightLen) {
-        //     lighting += max(dot(toLightDir, normal), 0.0) * 4.0 * vec3(0.9, 0.9, 0.85);
-        //   }
-        // }
+        if (bestIndex == 3 && trace_depth == 0.0) {
+          float distFromCenter = length(hit.xyz - (kLampStart + kLampSize/2.0));
+          lighting = 8.0 * vec3(0.9, 0.9, 0.85);
+        } else {
+          vec3 light = PointOnLightSource(hit.xyz + vec3(0.123, 0.456, 0.891) * sample_id);
+          vec3 toLight = light - hit.xyz;
+          float toLightLen = length(toLight);
+          vec3 toLightDir = toLight / toLightLen;
+          bool inShadow = intersect(e, vec4(toLightDir, 0), bestT2, bestIndex2, bestMaterial2, bestQuadric2);
+          if (!inShadow || bestT2 > toLightLen) {
+            lighting += max(dot(toLightDir, normal), 0.0) * 4.0 * vec3(0.9, 0.9, 0.85);
+          }
+        }
 
-        // // generate new dir
-        // float rand1 = rand(dot(vec3(1.8234, -0.1831, 0.8942), hit.xyz) + 0.1513*sample_id);
-        // float rand2 = rand(dot(vec3(-0.1234, 0.9841, 5.5741), hit.xyz) - 0.2901*sample_id);
-        // float longitude = 2.0 * kPi * rand1;
-        // float latitude = acos(sqrt(rand2));
-        // multiplier = 1.0 / latitude;
-        // vec3 cartesian = vec3(
-        //   sin(latitude) * sin(longitude),
-        //   cos(latitude),
-        //   sin(latitude) * cos(longitude));
-        // vec3 diffuse_reflection_dir = TBN(normal) * cartesian;
-        // vec3 mirror_reflection_dir = reflect(d.xyz, normal);
-        // d = vec4(mix(diffuse_reflection_dir, mirror_reflection_dir, bestMaterial.w), 0);
+        // generate new dir
+        float rand1 = rand(dot(vec3(1.8234, -0.1831, 0.8942), hit.xyz) + 0.1513*sample_id);
+        float rand2 = rand(dot(vec3(-0.1234, 0.9841, 5.5741), hit.xyz) - 0.2901*sample_id);
+        float longitude = 2.0 * kPi * rand1;
+        float latitude = acos(sqrt(rand2));
+        multiplier = 1.0 / latitude;
+        vec3 cartesian = vec3(
+          sin(latitude) * sin(longitude),
+          cos(latitude),
+          sin(latitude) * cos(longitude));
+        vec3 diffuse_reflection_dir = TBN(normal) * cartesian;
+        vec3 mirror_reflection_dir = reflect(d.xyz, normal);
+        d = vec4(mix(diffuse_reflection_dir, mirror_reflection_dir, bestMaterial.w), 0);
       } else {
         multiplier = 1.0;
         bestMaterial = vec4(1, 1, 1, 0);
@@ -162,6 +157,31 @@ var fsTraceSrc =
 
       return lighting * discoloration;
     }
+
+    float ToneMap_Internal(float x) {
+      float A = 0.22;
+      float B = 0.30;
+      float C = 0.10;
+      float D = 0.20;
+      float E = 0.01;
+      float F = 0.30;
+
+      return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F)) - E/F;
+    }
+
+    float Luminance(vec3 c) {
+      return sqrt(0.299 * c.r*c.r + 0.587 * c.g*c.g + 0.114 * c.b*c.b);
+    }
+
+    vec3 ToneMap(vec3 color) {
+      float luminance = Luminance(color);
+      if (luminance < 1e-3) {
+        return color;
+      }
+      float newLuminance = ToneMap_Internal(luminance) / ToneMap_Internal(11.2);
+      return color * newLuminance / luminance;
+    }
+
 
     void main() {
       vec4 d0 = vec4(normalize(viewDirToNormalize), 0.0);
@@ -179,14 +199,14 @@ var fsTraceSrc =
         }
       }
 
-      vec3 finalColor = outColor / float(kSampleCount);
+      vec3 finalColor = ToneMap(outColor / float(kSampleCount));
 
-      // if (framesSinceLastAction > 0) {
-      //   vec3 oldColor = texture2D(tex, texCoord).rgb;
-      //   finalColor = mix(oldColor, finalColor, 1.0 / float(framesSinceLastAction));
-      // }
+      if (framesSinceLastAction > 0) {
+        vec3 oldColor = texture2D(tex, texCoord).rgb;
+        finalColor = mix(oldColor, finalColor, 1.0 / float(framesSinceLastAction));
+      }
 
-      gl_FragColor = vec4(outColor, 1.0);
+      gl_FragColor = vec4(finalColor, 1.0);
     }
 
 `

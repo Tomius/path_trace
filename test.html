@@ -6,7 +6,7 @@
         <title>WebGL test</title>
     </head>
 
-    <body onload="start()">
+    <body onload="start()" onresize="resize()">
       <div>
         <canvas id="container"></canvas>
       </div>
@@ -49,6 +49,7 @@ var App = function(canvas, output)
   }
 }
 
+function start() {
   var canvas = document.getElementById("container");
   var output = document.getElementById("output");
   app = new App(canvas, output);
@@ -59,6 +60,13 @@ var App = function(canvas, output)
   app.gl.clearColor(0.6, 0.0, 0.3, 1.0);
   app.gl.clearDepth(1.0);
   app.gl.clear(app.gl.COLOR_BUFFER_BIT | app.gl.DEPTH_BUFFER_BIT);
+}
+
+
+function resize()
+{
+  this.quad = new Quad(this.gl, this.canvas.width, this.canvas.height);
+}
 </script>
 
 

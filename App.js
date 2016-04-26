@@ -5,7 +5,8 @@ var App = function(canvas, output)
 {
 	this.canvas = canvas;
 
-	this.gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+  var opts = { alpha: false, depth: false, stencil: false, premultipliedAlpha: false, antialias: false, preserveDrawingBuffer: true };
+	this.gl = canvas.getContext("webgl", opts) || canvas.getContext("experimental-webgl", opts);
 	if (this.gl == null) {
 		output.textContent = ">>> No WebGL support <<<";
 		return;

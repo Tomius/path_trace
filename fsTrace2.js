@@ -83,7 +83,7 @@ var fsTraceSrc =
       if (0.0 < t && t < bestT) {
         bestT = t;
         bestIndex = 2;
-        bestQuadric = mat4(0.0);
+        bestQuadric = mat4(1.0);
         bestMaterial = vec4(1, 1, 1, 0);
       }
 
@@ -95,7 +95,7 @@ var fsTraceSrc =
             kLampStart.z <= p.z && p.z <= kLampStart.z + kLampSize.z) {
           bestT = t;
           bestIndex = 3;
-          bestQuadric = mat4(0.0);
+          bestQuadric = mat4(1.0);
           bestMaterial = vec4(1, 1, 1, 0);
         }
       }
@@ -116,7 +116,7 @@ var fsTraceSrc =
 
       if (wasHit) {
         vec4 hit = e + d*bestT;
-        vec3 normal = normalize(hit.xyz);
+        vec3 normal = normalize(getQuadricNormal(bestQuadric, hit));
         e = hit + vec4(normal, 0.0) * 0.001;
 
         // calc lighting

@@ -111,7 +111,7 @@ var fsTraceSrc =
       int bestIndex, bestIndex2;
       vec4 bestMaterial, bestMaterial2;
       mat4 bestQuadric, bestQuadric2;
-      vec3 lighting = vec3(0.15);
+      vec3 lighting = vec3(0.0);
 
       bool wasHit = intersect(e, d, bestT, bestIndex, bestMaterial, bestQuadric);
 

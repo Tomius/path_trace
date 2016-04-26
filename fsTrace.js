@@ -10,7 +10,6 @@ var fsTraceSrc =
     uniform sampler2D tex;
 
     const int kSampleCount = 12;
-    const int kLightSampleCount = 1;
     const int kTraceDepth = 3;
     const float kPi = 3.14159265359;
     const vec3 kLampStart = vec3(-1.1, 2, -0.1);
@@ -121,19 +120,17 @@ var fsTraceSrc =
         e = hit + vec4(normal, 0.0) * 0.001;
 
         // calc lighting
-        for (int i = 0; i < kLightSampleCount; ++i) {
-          if (bestIndex == 3 && trace_depth == 0.0) {
-            float distFromCenter = length(hit.xyz - (kLampStart + kLampSize/2.0));
-            lighting = 8.0 * vec3(0.9, 0.9, 0.85);
-          } else {
-            vec3 light = PointOnLightSource(hit.xyz + vec3(0.123, 0.456, 0.891) * (0.4765*sample_id + 5.241*float(i)));
-            vec3 toLight = light - hit.xyz;
-            float toLightLen = length(toLight);
-            vec3 toLightDir = toLight / toLightLen;
-            bool inShadow = intersect(e, vec4(toLightDir, 0), bestT2, bestIndex2, bestMaterial2, bestQuadric2);
-            if (!inShadow || bestT2 > toLightLen) {
-              lighting += max(dot(toLightDir, normal), 0.0) * 4.0*vec3(0.9, 0.9, 0.85) / float(kLightSampleCount);
-            }
+        if (bestIndex == 3 && trace_depth == 0.0) {
+          float distFromCenter = length(hit.xyz - (kLampStart + kLampSize/2.0));
+          lighting = 8.0 * vec3(0.9, 0.9, 0.85);
+        } else {
+          vec3 light = PointOnLightSource(hit.xyz + vec3(0.123, 0.456, 0.891) * (0.4765*sample_id + 5.241*float(i)));
+          vec3 toLight = light - hit.xyz;
+          float toLightLen = length(toLight);
+          vec3 toLightDir = toLight / toLightLen;
+          bool inShadow = intersect(e, vec4(toLightDir, 0), bestT2, bestIndex2, bestMaterial2, bestQuadric2);
+          if (!inShadow || bestT2 > toLightLen) {
+            lighting += max(dot(toLightDir, normal), 0.0) * 4.0 * vec3(0.9, 0.9, 0.85);
           }
         }
 

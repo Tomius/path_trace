@@ -9,8 +9,8 @@ var fsTraceSrc =
     uniform int framesSinceLastAction;
     uniform sampler2D tex;
 
-    const int kSampleCount = 1;
-    const int kTraceDepth = 1;
+    const int kSampleCount = 2;
+    const int kTraceDepth = 2;
     const float kPi = 3.14159265359;
     const vec3 kLampStart = vec3(-1.1, 2, -0.1);
     const vec3 kLampSize = vec3(0.2, 0.01, 0.2);

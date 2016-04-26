@@ -77,55 +77,55 @@ var App = function(canvas, output)
 //   }
 // }
 
-App.prototype.clicked = function(event) {
-  try {
-    if (this.canvas.requestPointerLock) {
-      this.canvas.requestPointerLock();
-    } else if (this.canvas.mozRequestPointerLock) {
-      this.canvas.mozRequestPointerLock();
-    }
-  } catch(err) {
-    document.getElementById("output").innerHTML = err;
-  }
-}
+// App.prototype.clicked = function(event) {
+//   try {
+//     if (this.canvas.requestPointerLock) {
+//       this.canvas.requestPointerLock();
+//     } else if (this.canvas.mozRequestPointerLock) {
+//       this.canvas.mozRequestPointerLock();
+//     }
+//   } catch(err) {
+//     document.getElementById("output").innerHTML = err;
+//   }
+// }
 
-App.prototype.pointerLockChange = function(event) {
-  try {
-    this.ownMouse = (this.canvas == document.pointerLockElement) || (this.canvas == document.mozPointerLockElement);
-  } catch(err) {
-    document.getElementById("output").innerHTML = err;
-  }
-}
+// App.prototype.pointerLockChange = function(event) {
+//   try {
+//     this.ownMouse = (this.canvas == document.pointerLockElement) || (this.canvas == document.mozPointerLockElement);
+//   } catch(err) {
+//     document.getElementById("output").innerHTML = err;
+//   }
+// }
 
-App.prototype.keyDown = function(event) {
-  try {
-    this.quad.keydown(event.keyCode);
-    if (this.ownMouse)
-      this.camera.keydown(event.keyCode);
-  } catch(err) {
-    document.getElementById("output").innerHTML = err;
-  }
-}
+// App.prototype.keyDown = function(event) {
+//   try {
+//     this.quad.keydown(event.keyCode);
+//     if (this.ownMouse)
+//       this.camera.keydown(event.keyCode);
+//   } catch(err) {
+//     document.getElementById("output").innerHTML = err;
+//   }
+// }
 
-App.prototype.keyUp = function(event) {
-  try {
-    if (this.ownMouse)
-      this.camera.keyup(event.keyCode);
-  } catch(err) {
-    document.getElementById("output").innerHTML = err;
-  }
-}
+// App.prototype.keyUp = function(event) {
+//   try {
+//     if (this.ownMouse)
+//       this.camera.keyup(event.keyCode);
+//   } catch(err) {
+//     document.getElementById("output").innerHTML = err;
+//   }
+// }
 
-App.prototype.mouseMove = function(event) {
-  try {
-    if (!this.ownMouse)
-      return;
-    this.camera.mouseDelta.add( new Vector2(event.movementX, event.movementY));
-    event.preventDefault();
-  } catch(err) {
-    document.getElementById("output").innerHTML = err;
-  }
-}
+// App.prototype.mouseMove = function(event) {
+//   try {
+//     if (!this.ownMouse)
+//       return;
+//     this.camera.mouseDelta.add( new Vector2(event.movementX, event.movementY));
+//     event.preventDefault();
+//   } catch(err) {
+//     document.getElementById("output").innerHTML = err;
+//   }
+// }
 
   var canvas = document.getElementById("container");
   var output = document.getElementById("output");

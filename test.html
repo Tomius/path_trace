@@ -135,7 +135,7 @@ App.prototype.mouseMove = function(event) {
   app.gl.clearColor(0.6, 0.0, 0.3, 1.0);
   app.gl.clearDepth(1.0);
   app.gl.clear(app.gl.COLOR_BUFFER_BIT | app.gl.DEPTH_BUFFER_BIT);
-  app.quad = new Quad(this.gl, this.canvas.width, this.canvas.height);
+  app.quad = new Quad(app.gl, canvas.width, canvas.height);
 
   document.addEventListener('pointerlockchange', function(event){  app.pointerLockChange(event); }, false);
   document.addEventListener('mozpointerlockchange', function(event){  app.pointerLockChange(event); }, false);

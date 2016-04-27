@@ -9,7 +9,7 @@ var fsTraceSrc =
     uniform int framesSinceLastAction;
     uniform sampler2D tex;
 
-    const int kSampleCount = 16;
+    const int kSampleCount = 4;
     const int kTraceDepth = 4;
     const float kPi = 3.14159265359;
     const vec3 kLampStart = vec3(-1.1, 2, -0.1);
@@ -117,6 +117,9 @@ var fsTraceSrc =
       if (wasHit) {
         vec4 hit = e + d*bestT;
         vec3 normal = bestIndex >= 2 ? vec3(0, 1, 0) : normalize(getQuadricNormal(bestQuadric, hit));
+        if (dot(d.xyz, normal) > 0.0) {
+          normal = -normal;
+        }
         e = hit + vec4(normal, 0.0) * 0.001;
 
         // calc lighting

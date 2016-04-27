@@ -127,7 +127,7 @@ var fsTraceSrc =
           float distFromCenter = length(hit.xyz - (kLampStart + kLampSize/2.0));
           lighting = 8.0 * vec3(0.9, 0.9, 0.85);
         } else {
-          vec3 light = PointOnLightSource(hit.xyz + hit.zzy + pow(vec3(sample_id), vec3(0.123, 0.456, 0.891)));
+          vec3 light = PointOnLightSource(hit.xyz + vec3(sample_id));
           vec3 toLight = light - hit.xyz;
           float toLightLen = length(toLight);
           vec3 toLightDir = toLight / toLightLen;
@@ -138,8 +138,8 @@ var fsTraceSrc =
         }
 
         // generate new dir
-        float rand1 = rand(dot(vec3(1.8234, -0.1831, 0.8942), hit.xyx + hit.zzx) + pow(sample_id, 1.1513));
-        float rand2 = rand(dot(vec3(-0.1234, 0.9841, 2.5741), hit.yzy + hit.xxx) - pow(sample_id, 2.2901));
+        float rand1 = rand(dot(vec3(256, 16, 1), hit.xyz) + sample_id);
+        float rand2 = rand(dot(vec3(256, 16, 1), hit.xyz) - sample_id);
         float longitude = 2.0 * kPi * rand1;
         float latitude = acos(sqrt(rand2));
         multiplier = 1.0 / latitude;

@@ -61,7 +61,7 @@ var fsTraceSrc =
     }
 
     vec3 getQuadricNormal(mat4 A, vec4 hit) {
-      return hit.xyz;
+      return 2.0*(hit*A).xyz;
     }
 
     bool intersect(in vec4 e, in vec4 d, out float bestT, out int bestIndex,
@@ -122,7 +122,7 @@ var fsTraceSrc =
 
       if (wasHit) {
         vec4 hit = e + d*bestT;
-        vec3 normal = bestIndex >= 2 ? vec3(0, 1, 0) : normalize(getQuadricNormal(bestIndex == 0 ? quadrics[0] : quadrics[1], hit));
+        vec3 normal = bestIndex >= 2 ? vec3(0, 1, 0) : normalize(getQuadricNormal(bestQuadric, hit));
         if (dot(d.xyz, normal) > 0.0) {
           normal = -normal;
         }

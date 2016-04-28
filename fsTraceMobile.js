@@ -109,7 +109,7 @@ var fsTraceSrc =
       vec4 bestMaterial = vec4(0.0), bestMaterial2 = vec4(0.0);
       vec3 lighting = vec3(0.0);
 
-      bool wasHit = intersect(e, d, bestT, bestIndex, bestMaterial, bestQuadric);
+      bool wasHit = intersect(e, d, bestT, bestIndex, bestMaterial);
 
       if (wasHit) {
         vec4 hit = e + d*bestT;
@@ -135,7 +135,7 @@ var fsTraceSrc =
           vec3 toLight = light - hit.xyz;
           float toLightLen = length(toLight);
           vec4 toLightDir = vec4(toLight / toLightLen, 0);
-          bool inShadow = intersect(e, toLightDir, bestT2, bestIndex2, bestMaterial2, bestQuadric2);
+          bool inShadow = intersect(e, toLightDir, bestT2, bestIndex2, bestMaterial2);
           if (!inShadow || bestT2 > toLightLen) {
             lighting += max(dot(toLightDir.xyz, normal), 0.0) / (1.0 + toLightLen*toLightLen) * lightColor;
           }

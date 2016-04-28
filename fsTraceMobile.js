@@ -61,7 +61,7 @@ var fsTraceSrc =
     }
 
     vec3 getQuadricNormal(mat4 A, vec4 hit) {
-      return (A*hit).xyz + (hit*A).xyz;
+      return 2.0*(A*hit).xyz;
     }
 
     bool intersect(in vec4 e, in vec4 d, out float bestT, out int bestIndex,
@@ -83,7 +83,7 @@ var fsTraceSrc =
       if (0.0 < t && t < bestT) {
         bestT = t;
         bestIndex = 2;
-        bestQuadric = mat4(1.0);
+        bestQuadric = mat4(0.0);
         bestMaterial = vec4(1, 1, 1, 0);
       }
 
@@ -95,7 +95,7 @@ var fsTraceSrc =
             kLampStart.z <= p.z && p.z <= kLampStart.z + kLampSize.z) {
           bestT = t;
           bestIndex = 3;
-          bestQuadric = mat4(1.0);
+          bestQuadric = mat4(0.0);
           bestMaterial = vec4(1, 1, 1, 0);
         }
       }
@@ -116,16 +116,18 @@ var fsTraceSrc =
 
       if (wasHit) {
         vec4 hit = e + d*bestT;
-        vec3 normal = bestIndex >= 2 ? vec3(0, 1, 0) : normalize(hit.xyz);
+        vec3 normal = bestIndex >= 2 ? vec3(0, 1, 0) : normalize(getQuadricNormal(bestQuadric, hit));
         if (dot(d.xyz, normal) > 0.0) {
           normal = -normal;
         }
         e = hit + vec4(normal, 0.0) * 0.001;
 
         // calc lighting
+        const vec3 lightColor = 16.0 * vec3(0.9, 0.9, 0.85); 
         if (bestIndex == 3 && trace_depth == 0.0) {
-          float distFromCenter = length(hit.xyz - (kLampStart + kLampSize/2.0));
-          lighting = 8.0 * vec3(0.9, 0.9, 0.85);
+          vec3 light = PointOnLightSource(hit.xyz + vec3(sample_id));
+          vec3 toLight = light - e.xyz;
+          lighting = lightColor / (1.0 + dot(toLight, toLight));
         } else {
           vec3 light = PointOnLightSource(hit.xyz + vec3(sample_id));
           vec3 toLight = light - hit.xyz;
@@ -133,7 +135,7 @@ var fsTraceSrc =
           vec3 toLightDir = toLight / toLightLen;
           bool inShadow = intersect(e, vec4(toLightDir, 0), bestT2, bestIndex2, bestMaterial2, bestQuadric2);
           if (!inShadow || bestT2 > toLightLen) {
-            lighting += max(dot(toLightDir, normal), 0.0) * 4.0 * vec3(0.9, 0.9, 0.85);
+            lighting += max(dot(toLightDir, normal), 0.0) / (1.0 + toLightLen*toLightLen) * lightColor;
           }
         }
 
@@ -141,12 +143,14 @@ var fsTraceSrc =
         float rand1 = rand(dot(vec3(256, 16, 1), hit.xyz) + sample_id);
         float rand2 = rand(dot(vec3(256, 16, 1), hit.xyz) - sample_id);
         float longitude = 2.0 * kPi * rand1;
-        float latitude = acos(sqrt(rand2));
-        multiplier = 1.0 / latitude;
+        float latitude = acos(sqrt(rand2)) / 2.0;
+        float cos_latitude = cos(latitude);
+        float sin_latitude = sin(latitude);
+        multiplier = 1.0 / cos_latitude;
         vec3 cartesian = vec3(
-          sin(latitude) * sin(longitude),
-          cos(latitude),
-          sin(latitude) * cos(longitude));
+          sin_latitude * sin(longitude),
+          cos_latitude,
+          sin_latitude * cos(longitude));
         vec3 diffuse_reflection_dir = TBN(normal) * cartesian;
         vec3 mirror_reflection_dir = reflect(d.xyz, normal);
         d = vec4(mix(diffuse_reflection_dir, mirror_reflection_dir, bestMaterial.w), 0);
@@ -192,7 +196,8 @@ var fsTraceSrc =
 
       vec3 outColor = vec3(0.0);
       for (int sample = 0; sample < kSampleCount; sample++) {
-        vec4 d = d0, e = e0;
+        vec4 dir_offset = 0.001*vec4(rand(float(sample)) - 0.5, rand(float(sample)+1.0) - 0.5, rand(float(sample)+2.0) - 0.5, 0.0);
+        vec4 d = normalize(d0 + dir_offset), e = e0;
         float multiplier = 1.0;
         vec3 discoloration = vec3(1.0);
         for (int trace_depth = 0; trace_depth < kTraceDepth; trace_depth++) {
@@ -206,7 +211,7 @@ var fsTraceSrc =
 
       if (framesSinceLastAction > 0) {
         vec3 oldColor = texture2D(tex, texCoord).rgb;
-        finalColor = mix(oldColor, finalColor, 1.0 / float(framesSinceLastAction));
+        finalColor = mix(oldColor, finalColor, 1.0 / float(framesSinceLastAction+1));
       }
 
       gl_FragColor = vec4(finalColor, 1.0);

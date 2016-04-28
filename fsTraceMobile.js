@@ -65,14 +65,13 @@ var fsTraceSrc =
     }
 
     bool intersect(in vec4 e, in vec4 d, out float bestT, out int bestIndex,
-                   out vec4 bestMaterial, out mat4 bestQuadric) {
+                   out vec4 bestMaterial) {
       bestT = 10000.0;
 
       float t = intersectClippedQuadric(quadrics[0], quadrics[1], e, d);
       if (0.0 < t && t < bestT) {
         bestT = t;
         bestIndex = 0;
-        bestQuadric = quadrics[0];
         bestMaterial = materials[0];
       }
 
@@ -80,7 +79,6 @@ var fsTraceSrc =
       if (0.0 < t && t < bestT) {
         bestT = t;
         bestIndex = 1;
-        bestQuadric = quadrics[2];
         bestMaterial = materials[1];
       }
 
@@ -89,7 +87,6 @@ var fsTraceSrc =
       if (0.0 < t && t < bestT) {
         bestT = t;
         bestIndex = 2;
-        bestQuadric = mat4(0.0);
         bestMaterial = vec4(1, 1, 1, 0);
       }
 
@@ -101,7 +98,6 @@ var fsTraceSrc =
             kLampStart.z <= p.z && p.z <= kLampStart.z + kLampSize.z) {
           bestT = t;
           bestIndex = 3;
-          bestQuadric = mat4(0.0);
           bestMaterial = vec4(1, 1, 1, 0);
         }
       }
@@ -115,14 +111,15 @@ var fsTraceSrc =
       float bestT = 0.0, bestT2 = 0.0;
       int bestIndex = 0, bestIndex2 = 0;
       vec4 bestMaterial = vec4(1.0), bestMaterial2 = vec4(1.0);
-      mat4 bestQuadric = mat4(1.0), bestQuadric2 = mat4(1.0);
       vec3 lighting = vec3(0.0);
 
-      bool wasHit = intersect(e, d, bestT, bestIndex, bestMaterial, bestQuadric);
+      bool wasHit = intersect(e, d, bestT, bestIndex, bestMaterial);
 
       if (wasHit) {
         vec4 hit = e + d*bestT;
-        vec3 normal = bestIndex >= 2 ? vec3(0, 1, 0) : normalize(getQuadricNormal(bestQuadric, hit));
+        vec3 normal = bestIndex >= 2 ?
+                      vec3(0, 1, 0) :
+                      normalize(getQuadricNormal(bestIndex == 0 ? quadrics[0] : quadrics[2], hit));
         if (dot(d.xyz, normal) > 0.0) {
           normal = -normal;
         }
@@ -139,7 +136,7 @@ var fsTraceSrc =
           vec3 toLight = light - hit.xyz;
           float toLightLen = length(toLight);
           vec3 toLightDir = toLight / toLightLen;
-          bool inShadow = intersect(e, vec4(toLightDir, 0), bestT2, bestIndex2, bestMaterial2, bestQuadric2);
+          bool inShadow = intersect(e, vec4(toLightDir, 0), bestT2, bestIndex2, bestMaterial2);
           if (!inShadow || bestT2 > toLightLen) {
             lighting += max(dot(toLightDir, normal), 0.0) / (1.0 + toLightLen*toLightLen) * lightColor;
           }

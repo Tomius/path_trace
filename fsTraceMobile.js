@@ -85,7 +85,7 @@ var fsTraceSrc =
       }
 
       // plane at y = -0.5
-      float t = (-0.5 - e.y) / d.y;
+      t = (-0.5 - e.y) / d.y;
       if (0.0 < t && t < bestT) {
         bestT = t;
         bestIndex = 2;

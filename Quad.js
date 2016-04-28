@@ -78,14 +78,14 @@ var Quad = function(gl, width, height)
 
     this.makeNoClip().copyIntoArray(this.quadricData, 3*16);
 
-    this.materialData[0] = 1.15;
-    this.materialData[1] = 1.15;
+    this.materialData[0] = 0.9;
+    this.materialData[1] = 0.9;
     this.materialData[2] = 0.05;
     this.materialData[3] = 0.0;
 
     this.materialData[4] = 0.75;
-    this.materialData[5] = 1.0;
-    this.materialData[6] = 1.0;
+    this.materialData[5] = 0.9;
+    this.materialData[6] = 0.9;
     this.materialData[7] = 0.0;
 } // Quad constructor ends
 

@@ -9,8 +9,8 @@ var fsTraceSrc =
     uniform int framesSinceLastAction;
     uniform sampler2D tex;
 
-    const int kSampleCount = 4;
-    const int kTraceDepth = 4;
+    const int kSampleCount = 2;
+    const int kTraceDepth = 8;
     const float kPi = 3.14159265359;
     const vec3 kLampStart = vec3(-1.1, 2, -0.1);
     const vec3 kLampSize = vec3(0.2, 0.01, 0.2);
@@ -64,8 +64,8 @@ var fsTraceSrc =
       return (A*hit + hit*A).xyz;
     }
 
-    bool intersect(in vec4 e, in vec4 d, out float bestT, out int bestIndex,
-                   out vec4 bestMaterial, out mat4 bestQuadric) {
+    bool intersect(vec4 e, vec4 d, inout float bestT, inout int bestIndex,
+                   inout vec4 bestMaterial, inout mat4 bestQuadric) {
       bestT = 10000.0;
 
       for (int i = 0; i < 2; i++) {
@@ -84,7 +84,7 @@ var fsTraceSrc =
         bestT = t;
         bestIndex = 2;
         bestQuadric = mat4(0.0);
-        bestMaterial = vec4(1, 1, 1, 0);
+        bestMaterial = vec4(0.9, 0.9, 0.9, 0);
       }
 
       // lamp
@@ -96,7 +96,7 @@ var fsTraceSrc =
           bestT = t;
           bestIndex = 3;
           bestQuadric = mat4(0.0);
-          bestMaterial = vec4(1, 1, 1, 0);
+          bestMaterial = vec4(0.9, 0.9, 0.9, 0);
         }
       }
 
@@ -104,12 +104,13 @@ var fsTraceSrc =
       return bestT < 9999.0;
     }
 
-    vec3 trace(inout vec4 e, inout vec4 d, inout vec3 discoloration, float sample_id, float trace_depth, out float multiplier)
+    vec3 trace(inout vec4 e, inout vec4 d, inout vec3 discoloration, float sample_id,
+               float trace_depth, inout float multiplier, inout bool nothing_was_hit)
     {
-      float bestT, bestT2;
-      int bestIndex, bestIndex2;
-      vec4 bestMaterial, bestMaterial2;
-      mat4 bestQuadric, bestQuadric2;
+      float bestT = 0.0, bestT2 = 0.0;
+      int bestIndex = 0, bestIndex2 = 0;
+      vec4 bestMaterial = vec4(0.0), bestMaterial2 = vec4(0.0);
+      mat4 bestQuadric = mat4(0.0), bestQuadric2 = mat4(0.0);
       vec3 lighting = vec3(0.0);
 
       bool wasHit = intersect(e, d, bestT, bestIndex, bestMaterial, bestQuadric);
@@ -123,7 +124,7 @@ var fsTraceSrc =
         e = hit + vec4(normal, 0.0) * 0.001;
 
         // calc lighting
-        const vec3 lightColor = 16.0 * vec3(0.9, 0.9, 0.85); 
+        const vec3 lightColor = 4.0 * vec3(0.9, 0.9, 0.85);
         if (bestIndex == 3 && trace_depth == 0.0) {
           vec3 light = PointOnLightSource(hit.xyz + vec3(sample_id));
           vec3 toLight = light - e.xyz;
@@ -132,10 +133,10 @@ var fsTraceSrc =
           vec3 light = PointOnLightSource(hit.xyz + vec3(sample_id));
           vec3 toLight = light - hit.xyz;
           float toLightLen = length(toLight);
-          vec3 toLightDir = toLight / toLightLen;
-          bool inShadow = intersect(e, vec4(toLightDir, 0), bestT2, bestIndex2, bestMaterial2, bestQuadric2);
+          vec4 toLightDir = vec4(toLight / toLightLen, 0);
+          bool inShadow = intersect(e, toLightDir, bestT2, bestIndex2, bestMaterial2, bestQuadric2);
           if (!inShadow || bestT2 > toLightLen) {
-            lighting += max(dot(toLightDir, normal), 0.0) / (1.0 + toLightLen*toLightLen) * lightColor;
+            lighting += max(dot(toLightDir.xyz, normal), 0.0) / (1.0 + toLightLen*toLightLen) * lightColor;
           }
         }
 
@@ -158,6 +159,7 @@ var fsTraceSrc =
         multiplier = 1.0;
         bestMaterial = vec4(1, 1, 1, 0);
         lighting = vec3(0.15, 0.25, 0.35);
+        nothing_was_hit = true;
       }
 
       discoloration *= bestMaterial.rgb;
@@ -165,56 +167,35 @@ var fsTraceSrc =
       return lighting * discoloration;
     }
 
-    float ToneMap_Internal(float x) {
-      float A = 0.22;
-      float B = 0.30;
-      float C = 0.10;
-      float D = 0.20;
-      float E = 0.01;
-      float F = 0.30;
-
-      return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F)) - E/F;
-    }
-
-    float Luminance(vec3 c) {
-      return sqrt(0.299 * c.r*c.r + 0.587 * c.g*c.g + 0.114 * c.b*c.b);
-    }
-
-    vec3 ToneMap(vec3 color) {
-      float luminance = Luminance(color);
-      if (luminance < 1e-3) {
-        return color;
-      }
-      float newLuminance = ToneMap_Internal(luminance) / ToneMap_Internal(11.2);
-      return color * newLuminance / luminance;
-    }
-
-
     void main() {
       vec4 d0 = vec4(normalize(viewDirToNormalize), 0.0);
       vec4 e0 = vec4(eye, 1.0);
 
-      vec3 outColor = vec3(0.0);
+      vec3 out_color = vec3(0.0);
       for (int sample = 0; sample < kSampleCount; sample++) {
         vec4 dir_offset = 0.001*vec4(rand(float(sample)) - 0.5, rand(float(sample)+1.0) - 0.5, rand(float(sample)+2.0) - 0.5, 0.0);
         vec4 d = normalize(d0 + dir_offset), e = e0;
         float multiplier = 1.0;
         vec3 discoloration = vec3(1.0);
+        bool nothing_was_hit = false;
         for (int trace_depth = 0; trace_depth < kTraceDepth; trace_depth++) {
           float oldMultiplier = multiplier;
           float randomSeed = fract(0.7544*float(framesSinceLastAction)) + 0.47931*float(kTraceDepth*sample) + 1.7415*float(trace_depth);
-          outColor += oldMultiplier * trace(e, d, discoloration, randomSeed, float(trace_depth), multiplier);
+          out_color += oldMultiplier * trace(e, d, discoloration, randomSeed, float(trace_depth), multiplier, nothing_was_hit);
+          if (nothing_was_hit) {
+            break;
+          }
         }
       }
 
-      vec3 finalColor = ToneMap(outColor / float(kSampleCount));
+      vec3 final_color = out_color / float(kSampleCount);
 
       if (framesSinceLastAction > 0) {
-        vec3 oldColor = texture2D(tex, texCoord).rgb;
-        finalColor = mix(oldColor, finalColor, 1.0 / float(framesSinceLastAction+1));
+        vec3 old_color = texture2D(tex, texCoord).rgb;
+        final_color = mix(old_color, final_color, 1.0 / float(framesSinceLastAction+1));
       }
 
-      gl_FragColor = vec4(finalColor, 1.0);
+      gl_FragColor = vec4(final_color, 1.0);
     }
 
 `

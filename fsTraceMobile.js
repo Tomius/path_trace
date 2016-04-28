@@ -122,7 +122,7 @@ var fsTraceSrc =
 
       if (wasHit) {
         vec4 hit = e + d*bestT;
-        vec3 normal = bestIndex >= 2 ? vec3(0, 1, 0) : normalize(getQuadricNormal(bestQuadric, hit));
+        vec3 normal = bestIndex >= 2 ? vec3(0, 1, 0) : normalize(getQuadricNormal(bestIndex == 0 ? quadrics[0] : quadrics[1], hit));
         if (dot(d.xyz, normal) > 0.0) {
           normal = -normal;
         }

@@ -189,10 +189,10 @@ var fsTraceSrc =
     vec3 ToneMap(vec3 color) {
       float luminance = Luminance(color);
       if (luminance < 1e-3) {
-        return color;
+        return clamp(color, vec3(0.0), vec3(1.0));
       }
       float newLuminance = ToneMap_Internal(luminance) / ToneMap_Internal(11.2);
-      return color * newLuminance / luminance;
+      return clamp(color * newLuminance / luminance, vec3(0.0), vec3(1.0));
     }
 
 

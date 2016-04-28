@@ -60,8 +60,8 @@ var fsTraceSrc =
       return t;
     }
 
-    vec3 getQuadricNormal(mat4 A, vec4 hit) {
-      return 2.0*(hit*A).xyz;
+    vec3 getQuadricNormal(mat4 bestQuadric, vec4 hit) {
+      return 2.0*(hit*bestQuadric).xyz;
     }
 
     bool intersect(in vec4 e, in vec4 d, out float bestT, out int bestIndex,

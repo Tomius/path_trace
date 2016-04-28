@@ -124,7 +124,7 @@ var fsTraceSrc =
         e = hit + vec4(normal, 0.0) * 0.001;
 
         // calc lighting
-        const vec3 lightColor = 4.0 * vec3(0.9, 0.9, 0.85);
+        const vec3 lightColor = 3.0 * vec3(0.9, 0.9, 0.85);
         if (bestIndex == 3 && trace_depth == 0.0) {
           vec3 light = PointOnLightSource(hit.xyz + vec3(sample_id));
           vec3 toLight = light - e.xyz;

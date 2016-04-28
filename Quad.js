@@ -51,6 +51,9 @@ var Quad = function(gl, width, height)
 
     this.quadricData = new Float32Array(16*32);
     this.materialData = new Float32Array(16*4);
+    for (var i = 0; i < 16*4; ++i) {
+      this.materialData[i] = 0.0;
+    }
 
     var A = this.makeSphere();
     A.copyIntoArray(this.quadricData, 0*16);

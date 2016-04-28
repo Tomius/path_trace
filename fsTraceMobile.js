@@ -106,10 +106,10 @@ var fsTraceSrc =
 
     vec3 trace(inout vec4 e, inout vec4 d, inout vec3 discoloration, float sample_id, float trace_depth, out float multiplier)
     {
-      float bestT, bestT2;
-      int bestIndex, bestIndex2;
-      vec4 bestMaterial, bestMaterial2;
-      mat4 bestQuadric, bestQuadric2;
+      float bestT = 0.0, bestT2 = 0.0;
+      int bestIndex = 0, bestIndex2 = 0;
+      vec4 bestMaterial = vec4(1.0), bestMaterial2 = vec4(1.0);
+      mat4 bestQuadric = mat4(1.0), bestQuadric2 = mat4(1.0);
       vec3 lighting = vec3(0.0);
 
       bool wasHit = intersect(e, d, bestT, bestIndex, bestMaterial, bestQuadric);
@@ -123,7 +123,7 @@ var fsTraceSrc =
         e = hit + vec4(normal, 0.0) * 0.001;
 
         // calc lighting
-        const vec3 lightColor = 16.0 * vec3(0.9, 0.9, 0.85); 
+        const vec3 lightColor = 16.0 * vec3(0.9, 0.9, 0.85);
         if (bestIndex == 3 && trace_depth == 0.0) {
           vec3 light = PointOnLightSource(hit.xyz + vec3(sample_id));
           vec3 toLight = light - e.xyz;

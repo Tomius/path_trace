@@ -164,7 +164,7 @@ var fsTraceSrc =
 
       discoloration *= bestMaterial.rgb;
 
-      return lighting * discoloration;
+      return clamp(lighting * discoloration, vec3(0.0), vec3(1.0));
     }
 
     void main() {
@@ -188,7 +188,7 @@ var fsTraceSrc =
         }
       }
 
-      vec3 final_color = out_color / float(kSampleCount);
+      vec3 final_color = clamp(out_color / float(kSampleCount), vec3(0.0), vec3(1.0));
 
       if (framesSinceLastAction > 0) {
         vec3 old_color = texture2D(tex, texCoord).rgb;
